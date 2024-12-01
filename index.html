@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Bootstrap 5 + Choices.js Example</title>
+
+  <!-- Bootstrap 5 CSS  Choices.js -->
+  <!-- <link href='./css/choices.js-bootstrap.css' rel='stylesheet'> -->
+  <link href='./css/choices.js-bootstrap.min.css' rel='stylesheet'>
+
+  <style>
+    [data-label-class='search-hint'] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class='container mt-5'>
+  <h2>Using config</h2>
+  <div class='row mt-4'>
+    <div class='col'>
+      <label for='my-select'>Choose a pet:</label>
+
+      <select name='select-pet' id='select-pet1' class='d-none' data-placeholder='Choose a pet...'>
+      </select>
+    </div>
+    <div class='col'>
+      <label for='my-select'>Choose a pet:</label>
+
+      <select name='select-pet' id='select-pet2' class='d-none' data-placeholder='Choose a pet...'>
+      </select>
+    </div>
+  </div>
+  <div class='row mt-4'>
+    <div class='col'>
+      <label for='my-select'>Choose a pet:</label>
+
+      <select name='select-pet' id='select-pet3' class='d-none' data-placeholder='Choose a pet...'>
+      </select>
+    </div>
+    <div class='col'>
+      <label for='my-select'>Choose a pet:</label>
+
+      <select name='select-pet' id='select-pet4' class='d-none' data-placeholder='Choose a pet...'>
+      </select>
+    </div>
+  </div>
+
+  <hr class='mt-5'>
+  <h2>Cascading select</h2>
+  <div class='row mt-4'>
+    <div class='col'>
+      <label for='my-select'>Choose a pet:</label>
+
+      <select name='select-pet' id='select-pet5' class='d-none' data-placeholder='Choose a pet...'>
+      </select>
+    </div>
+    <div class='col'>
+      <label for='select-hobby'>Pet's hobby:</label>
+
+      <select name='select-hobby' id='select-hobby' class='d-none' data-placeholder='Choose a hobby...'>
+      </select>
+    </div>
+</div>
+
+<!-- Choices.js JS -->
+<script src='https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js'></script>
+<!-- <script src='./js/choices.js'></script> -->
+
+<script src='./js/choices-remote-data.js'></script>
+<script type='importmap'>
+  {
+    "imports": {
+      "http-request-mock": "https://cdn.jsdelivr.net/npm/http-request-mock@2.0.2/+esm"
+    }
+  }
+</script>
+
+<script type='module' src='./js/app.mjs'></script>
+
+</body>
+</html>

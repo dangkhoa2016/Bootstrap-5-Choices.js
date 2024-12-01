@@ -1,0 +1,29 @@
+{
+  "name": "choices-remote-data",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "autoprefixer": "^10.4.20",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "choices.js": "^11.0.2",
+    "nodemon": "^3.1.7",
+    "postcss": "^8.4.49",
+    "postcss-cli": "^11.0.0",
+    "sass": "1.77.6"
+  },
+  "scripts": {
+    "css-source": "./css/choices.js-bootstrap.scss",
+    "css-output": "./css/choices.js-bootstrap.css",
+    "css-output-min": "./css/choices.js-bootstrap.min.css",
+    "css-autoprefixer-output": "./css/choices.js-bootstrap.autoprefixer.css",
+
+    "build:css:min": "sass $npm_package_scripts_css_source:$npm_package_scripts_css_output_min --no-source-map --load-path=node_modules --style=compressed",
+    "build:css:compile": "sass $npm_package_scripts_css_source:$npm_package_scripts_css_output --no-source-map --load-path=node_modules",
+    "build:css:prefix": "postcss $npm_package_scripts_css_output --use=autoprefixer --output=$npm_package_scripts_css_autoprefixer_output",
+    "build:css": "yarn build:css:compile && yarn build:css:prefix",
+    "watch:css": "nodemon --watch ./css/ --ext scss --exec \"yarn build:css\""
+  },
+  "browserslist": [
+    "defaults"
+  ]
+}
