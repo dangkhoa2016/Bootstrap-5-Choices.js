@@ -54,7 +54,7 @@ class ChoicesRemoteData {
     this.keyword = '';
     this.choices = null;
 
-    this.initialize(element);
+    this.initializeChoices(element);
   }
 
   // Fetch data from the server
@@ -68,23 +68,34 @@ class ChoicesRemoteData {
         if (data.length < this.options.itemsPerPage)
           this.hasMoreData = false;
 
+        this.isLoading = false;
+
         return data.map(item => ({
           value: item.value,
           label: item.label,
         }));
       })
       .catch(error => {
+        this.isLoading = false;
         console.error('Error fetching data:', error);
         return [];
       });
   }
 
   updateFetchUrl(url) {
+    // console.log('updateFetchUrl', url);
+    if (url) {
+      this.triggerSearch = true;
+      this.hasMoreData = true;
+    } else {
+      this.triggerSearch = false;
+      this.hasMoreData = false;
+    }
+
     this.options.fetchUrl = url;
     this.currentPage = 1;
-    this.hasMoreData = true;
-    this.triggerSearch = true;
     this.keyword = '';
+    this.clearSelection(true);
   }
 
   enableSelect() {
@@ -115,67 +126,56 @@ class ChoicesRemoteData {
     }
   }
 
-  // Check if the dropdown is scrolled to the bottom
-  checkIfDropdownScrolledToBottom() {
-    if (!this.hasMoreData) {
+  // Initialize the Choices.js select element and bind event listeners
+  initializeChoices(element) {
+    if (!element || this.choices)
       return;
-    }
+    
+    const t = this;
+    t.fetchDataFromServer = t.fetchDataFromServer.bind(t);
 
-    const scrollableElement = this.choices.choiceList.element;
-    const bottomOfDropdown = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
+    t.addSearchHintOptionToElement(element);
 
-    if (bottomOfDropdown && !this.isLoading) {
-      this.isLoading = true;
-      this.currentPage++;
+    new Choices(element, {
+      resetScrollPosition: false,
+      searchChoices: false,
+      searchFloor: t.options.minSearchLength,
+      shouldSort: false,
+      classNames: {
+        containerOuter: ['choices', 'mt-2'],
+        placeholder: ['choices__placeholder', 'text-secondary'],
+      },
+      removeItemButton: true,
+      callbackOnInit: function () {
+        t.initializeChoicesCallback(this);
+        if (t.options.onInit)
+          t.options.onInit(t, this);
+        if (t.options.disabled) {
+          this.disable();
+          return;
+        }
 
-      this.choices.setChoices(this.fetchDataFromServer, 'value', 'label', false);
-
-      this.isLoading = false;
-    }
-  }
-
-  // Show the search hint message
-  displaySearchHint(message) {
-    let hintElement = this.choices.choiceList.element.querySelector('[data-label-class="search-hint"]');
-    if (!hintElement) {
-      this.choices.choiceList.element.children[0].style.display = 'none';
-      this.choices.choiceList.element.appendChild(this.cacheSearchHintElement);
-      hintElement = this.choices.choiceList.element.querySelector('[data-label-class="search-hint"]');
-    }
-
-    const hintText = hintElement.querySelector('.search-hint');
-    hintElement.style.display = 'block';
-    hintText.innerText = message;
-  }
-
-  // Hide the search hint message
-  hideSearchHintMessage() {
-    const hintElement = this.choices.choiceList.element.querySelector('[data-label-class="search-hint"]');
-    if (hintElement)
-      hintElement.style.display = 'none';
-  }
-
-  // Toggle the visibility of selectable items
-  toggleSelectableItemsVisibility(displayStyle) {
-    const items = this.choices.choiceList.element.querySelectorAll('[data-choice-selectable]');
-    if (!items)
-      return;
-
-    items.forEach(item => {
-      item.style.display = displayStyle;
+        if (t.options.loadDataOnStart && t.options.fetchUrl) {
+          t.triggerSearch = false;
+          this.setChoices(t.fetchDataFromServer, 'value', 'label', false);
+        }
+        else if (t.options.fetchUrl)
+          t.triggerSearch = true;
+      },
     });
   }
 
-  // Load option items in the dropdown
-  loadOptionItemsWithSearchHint(displaySearchHint = false) {
-    this.choices._store._state.choices = this.choices._store._state.choices.filter(item => item.labelClass?.includes('search-hint'));
-    this.choices.passedElement.element.querySelectorAll(':not([data-label-class="search-hint"],[selected])').forEach(item => item.remove());
-    this.toggleSelectableItemsVisibility('none');
-    this.displaySearchHint(displaySearchHint ? `Searching for "${this.keyword}"...` : 'Loading...');
+  // Add search hint option to the select element
+  addSearchHintOptionToElement(element) {
+    if (!element)
+      return;
 
-    this.choices.setChoices(this.fetchDataFromServer, 'value', 'label', false).then(() => {
-      this.hideSearchHintMessage();
-    });
+    const searchHintOption = document.createElement('option');
+    searchHintOption.classList.add('search-hint');
+    searchHintOption.innerText = `Enter more than ${this.options.minSearchLength} character(s)`;
+    searchHintOption.setAttribute('data-label-class', 'search-hint');
+    searchHintOption.setAttribute('disabled', 'disabled');
+    element.appendChild(searchHintOption);
   }
 
   // Handle the search functionality
@@ -184,13 +184,10 @@ class ChoicesRemoteData {
     if (this.keyword.length === 0) {
       this.hideSearchHintMessage();
 
-      if (this.triggerSearch) {
-        this.currentPage = 1;
-        this.hasMoreData = true;
-        this.triggerSearch = false;
-        this.loadOptionItemsWithSearchHint();
-      } else
-        this.toggleSelectableItemsVisibility('block');
+      this.currentPage = 1;
+      this.hasMoreData = true;
+      this.triggerSearch = false;
+      this.loadOptionItemsWithSearchHint();
       return;
     }
 
@@ -215,6 +212,7 @@ class ChoicesRemoteData {
     }, 300);
   };
 
+  // Initialize choices callback to handle scroll and search hint
   initializeChoicesCallback(choicesInstance) {
     choicesInstance.choiceList.element.addEventListener('scroll', this.checkIfDropdownScrolledToBottom.bind(this));
 
@@ -247,52 +245,64 @@ class ChoicesRemoteData {
     this.cacheSearchHintElement = choicesInstance._store.state.choices[0].choiceEl;
   }
 
-  addSearchHintOptionToElement(element) {
-    if (!element)
+  // Check if the dropdown is scrolled to the bottom and load more data
+  checkIfDropdownScrolledToBottom() {
+    if (!this.hasMoreData) {
       return;
+    }
 
-    const searchHintOption = document.createElement('option');
-    searchHintOption.classList.add('search-hint');
-    searchHintOption.innerText = `Enter more than ${this.options.minSearchLength} character(s)`;
-    searchHintOption.setAttribute('data-label-class', 'search-hint');
-    searchHintOption.setAttribute('disabled', 'disabled');
-    element.appendChild(searchHintOption);
+    const scrollableElement = this.choices.choiceList.element;
+    const scrollPosition = (scrollableElement.scrollHeight - scrollableElement.scrollTop - scrollableElement.clientHeight);
+    const bottomOfDropdown = scrollPosition < 30;
+    if (bottomOfDropdown && !this.isLoading) {
+      this.isLoading = true;
+      this.currentPage++;
+
+      this.choices.setChoices(this.fetchDataFromServer, 'value', 'label', false);
+    }
   }
 
-  // Initialize the Choices.js select element and bind event listeners
-  initialize(element) {
-    if (!element || this.choices)
+  // Show the search hint message
+  displaySearchHint(message) {
+    let hintElement = this.choices.choiceList.element.querySelector(`[data-label-class='search-hint']`);
+    if (!hintElement) {
+      this.choices.choiceList.element.children[0].style.display = 'none';
+      this.choices.choiceList.element.appendChild(this.cacheSearchHintElement);
+      hintElement = this.choices.choiceList.element.querySelector(`[data-label-class='search-hint']`);
+    }
+
+    const hintText = hintElement.querySelector('.search-hint');
+    hintElement.style.display = 'block';
+    hintText.innerText = message;
+  }
+
+  // Hide the search hint message
+  hideSearchHintMessage() {
+    const hintElement = this.choices.choiceList.element.querySelector(`[data-label-class='search-hint']`);
+    if (hintElement)
+      hintElement.style.display = 'none';
+  }
+
+  // Toggle the visibility of selectable items
+  toggleSelectableItemsVisibility(displayStyle) {
+    const items = this.choices.choiceList.element.querySelectorAll('[data-choice-selectable]');
+    if (!items)
       return;
-    
-    const t = this;
-    t.fetchDataFromServer = t.fetchDataFromServer.bind(t);
 
-    t.addSearchHintOptionToElement(element);
+    items.forEach(item => {
+      item.style.display = displayStyle;
+    });
+  }
 
-    new Choices(element, {
-      resetScrollPosition: false,
-      searchChoices: false,
-      searchFloor: t.options.minSearchLength,
-      shouldSort: false,
-      classNames: {
-        containerOuter: ['choices', 'mt-2'],
-        placeholder: ['choices__placeholder', 'text-secondary'],
-      },
-      removeItemButton: true,
-      callbackOnInit: function () {
-        t.initializeChoicesCallback(this);
-        if (t.options.onInit)
-          t.options.onInit(t, this);
-        if (t.options.disabled) {
-          this.disable();
-          return;
-        }
+  // Load option items with search hint in the dropdown
+  loadOptionItemsWithSearchHint(displaySearchHint = false) {
+    this.choices._store._state.choices = this.choices._store._state.choices.filter(item => item.labelClass?.includes('search-hint'));
+    this.choices.passedElement.element.querySelectorAll(`:not([data-label-class='search-hint'],[selected])`).forEach(item => item.remove());
+    this.toggleSelectableItemsVisibility('none');
+    this.displaySearchHint(displaySearchHint ? `Searching for "${this.keyword}"...` : 'Loading...');
 
-        if (t.options.loadDataOnStart)
-          this.setChoices(t.fetchDataFromServer, 'value', 'label', false);
-        else
-          t.triggerSearch = true;
-      },
+    this.choices.setChoices(this.fetchDataFromServer, 'value', 'label', false).then(() => {
+      this.hideSearchHintMessage();
     });
   }
 }
