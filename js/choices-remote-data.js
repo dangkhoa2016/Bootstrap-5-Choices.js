@@ -184,13 +184,10 @@ class ChoicesRemoteData {
     if (this.keyword.length === 0) {
       this.hideSearchHintMessage();
 
-      if (this.triggerSearch) {
-        this.currentPage = 1;
-        this.hasMoreData = true;
-        this.triggerSearch = false;
-        this.loadOptionItemsWithSearchHint();
-      } else
-        this.toggleSelectableItemsVisibility('block');
+      this.currentPage = 1;
+      this.hasMoreData = true;
+      this.triggerSearch = false;
+      this.loadOptionItemsWithSearchHint();
       return;
     }
 

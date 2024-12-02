@@ -1,5 +1,7 @@
 // for simulating the fake response from the server, remove this line or comment it out to see the real response
 import './fake-response.mjs';
+// normal choices.js
+import './normal.mjs';
 
 const selectWithSearch1 = new ChoicesRemoteData('#select-pet1', {
   fetchUrl: '/home/pets',
