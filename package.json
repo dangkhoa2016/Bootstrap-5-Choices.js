@@ -1,5 +1,5 @@
 {
-  "name": "choices-remote-data",
+  "name": "choices-refactor",
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "autoprefixer": "^10.4.20",
@@ -9,19 +9,31 @@
     "nodemon": "^3.1.7",
     "postcss": "^8.4.49",
     "postcss-cli": "^11.0.0",
-    "sass": "1.77.6"
+    "sass": "1.77.6",
+    "tailwindcss": "^3.4.17"
   },
   "scripts": {
-    "css-source": "./css/choices.js-bootstrap.scss",
-    "css-output": "./css/choices.js-bootstrap.css",
-    "css-output-min": "./css/choices.js-bootstrap.min.css",
-    "css-autoprefixer-output": "./css/choices.js-bootstrap.autoprefixer.css",
-
-    "build:css:min": "sass $npm_package_scripts_css_source:$npm_package_scripts_css_output_min --no-source-map --load-path=node_modules --style=compressed",
-    "build:css:compile": "sass $npm_package_scripts_css_source:$npm_package_scripts_css_output --no-source-map --load-path=node_modules",
-    "build:css:prefix": "postcss $npm_package_scripts_css_output --use=autoprefixer --output=$npm_package_scripts_css_autoprefixer_output",
-    "build:css": "yarn build:css:compile && yarn build:css:prefix",
-    "watch:css": "nodemon --watch ./css/ --ext scss --exec \"yarn build:css\""
+    "css-bootstrap-source": "./assets/css-src/choices.js-bootstrap-src.scss",
+    "css-bootstrap-output": "./assets/css/choices.js-bootstrap.css",
+    "css-bootstrap-output-min": "./assets/css/choices.js-bootstrap.min.css",
+    "css-bootstrap-autoprefixer-output": "./assets/css/choices.js-bootstrap.autoprefixer.css",
+    "css-tailwindcss-source": "./assets/css-src/choices.js-tailwindcss-src.css",
+    "css-tailwindcss-output": "./assets/css/choices.js-tailwindcss.css",
+    "css-tailwindcss-output-min": "./assets/css/choices.js-tailwindcss.min.css",
+    "css-tailwindcss-autoprefixer-output": "./assets/css/choices.js-tailwindcss.autoprefixer.css",
+    "build:css:bootstrap:min": "sass $npm_package_scripts_css_bootstrap_source:$npm_package_scripts_css_bootstrap_output_min --no-source-map --load-path=node_modules --style=compressed",
+    "build:css:bootstrap:compile": "sass $npm_package_scripts_css_bootstrap_source:$npm_package_scripts_css_bootstrap_output --no-source-map --load-path=node_modules",
+    "build:css:bootstrap:prefix": "postcss $npm_package_scripts_css_bootstrap_output --use=autoprefixer --output=$npm_package_scripts_css_bootstrap_autoprefixer_output",
+    "build:css:bootstrap": "yarn build:css:bootstrap:compile && yarn build:css:bootstrap:prefix",
+    "watch:css:bootstrap": "nodemon --watch ./assets/css/ --ext scss --exec \"yarn build:css:bootstrap\"",
+    "build:css:tailwindcss:prefix": "tailwindcss -i $npm_package_scripts_css_tailwindcss_source -o $npm_package_scripts_css_tailwindcss_autoprefixer_output",
+    "build:css:tailwindcss:compile": "tailwindcss -i $npm_package_scripts_css_tailwindcss_source -o $npm_package_scripts_css_tailwindcss_output --no-autoprefixer",
+    "build:css:tailwindcss:min": "yarn build:css:tailwindcss:compile -m -o $npm_package_scripts_css_tailwindcss_output_min",
+    "build:css:tailwindcss": "yarn build:css:tailwindcss:compile",
+    "watch:css:tailwindcss": "yarn build:css:tailwindcss:compile -w",
+    "build:css": "yarn build:css:bootstrap && yarn build:css:tailwindcss",
+    "build:css:min": "yarn build:css:bootstrap:min && yarn build:css:tailwindcss:min",
+    "watch:css": "yarn watch:css:bootstrap && yarn watch:css:tailwindcss"
   },
   "browserslist": [
     "defaults"

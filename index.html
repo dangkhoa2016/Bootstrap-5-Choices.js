@@ -1,84 +1,59 @@
 <!DOCTYPE html>
-<html lang='en'>
-<head>
-  <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <title>Bootstrap 5 + Choices.js Example</title>
+<html lang="en">
+  <head>
+    <title>Choices.js Refactor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Bootstrap 5 CSS  Choices.js -->
-  <!-- <link href='./css/choices.js-bootstrap.css' rel='stylesheet'> -->
-  <link href='./css/choices.js-bootstrap.min.css' rel='stylesheet'>
+    <link rel='apple-touch-icon' sizes='180x180' href='/assets/images/apple-touch-icon.png' />
+    <link rel='icon' type='image/png' href='/assets/images/favicon-32x32.png' sizes='32x32' />
+    <link rel='icon' type='image/png' href='/assets/images/favicon-16x16.png' sizes='16x16' />
+    <link rel='manifest' href='/assets/images/manifest.json' />
+    <link rel='mask-icon' href='/assets/images/safari-pinned-tab.svg' color='#005F75' />
+    <link rel='shortcut icon' href='/assets/images/favicon.ico' />
+  </head>
 
-  <style>
-    [data-label-class='search-hint'] {
-      display: none;
-    }
-  </style>
-</head>
-<body>
+  <body>
+    <h1 class="text-3xl font-semibold text-slate-800 text-center my-6">Choices.js Refactor</h1>
+    <p class="text-slate-600 text-center my-6">Click the invidual card to view each css framework</p>
 
-<div class='container mt-5'>
-  <h2>Using config</h2>
-  <div class='row mt-4'>
-    <div class='col'>
-      <label for='my-select'>Choose a pet:</label>
+    <div class="max-w-screen-lg mx-auto p-5 sm:p-10 md:p-16">
+      <div class="grid grid-cols-1 mt-10 sm:grid-cols-2 gap-10">
+        <div class="rounded-lg overflow-hidden shadow-lg">
+          <a href='./bootstrap.html'>
+            <div class="sm:h-56 bg-cover bg-center h-80" style="background-image: url('./assets/images/bootstrap5.jpg');">
+            </div>
+          
+            <div class="px-6 py-4">
+              <h2 class="text-xl font-semibold text-gray-800">Bootstrap v5 CSS</h2>
+              <p class="text-gray-600">
+                Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first front-end web development.
+              </p>
+            </div>
+          </a>
 
-      <select name='select-pet' id='select-pet1' class='d-none' data-placeholder='Choose a pet...'>
-      </select>
+          <div class="px-6 py-3 bg-gray-100">
+            <a href='./bootstrap.html' class="bg-blue-500 text-white py-2 px-4 rounded">View</a>
+          </div>
+        </div>
+
+        <div class="rounded-lg overflow-hidden shadow-lg mt-4 sm:mt-0 relative">
+          <a href='./tailwindcss.html'>
+            <div class="sm:h-56 bg-cover bg-center h-80" style="background-image: url('./assets/images/tailwind.jpg');">
+            </div>
+          
+            <div class="px-6 py-4">
+              <h2 class="text-xl font-semibold text-gray-800">Tailwind CSS</h2>
+              <p class="text-gray-600">
+                Tailwind CSS is a utility-first CSS framework for rapidly building custom designs.
+              </p>
+            </div>
+          </a>
+        
+          <div class="px-6 py-3 relative sm:absolute bg-gray-100 bottom-0 w-full">
+            <a href='./tailwindcss.html' class="bg-blue-500 text-white py-2 px-4 rounded">View</a>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class='col'>
-      <label for='my-select'>Choose a pet:</label>
-
-      <select name='select-pet' id='select-pet2' class='d-none' data-placeholder='Choose a pet...'>
-      </select>
-    </div>
-  </div>
-  <div class='row mt-4'>
-    <div class='col'>
-      <label for='my-select'>Choose a pet:</label>
-
-      <select name='select-pet' id='select-pet3' class='d-none' data-placeholder='Choose a pet...'>
-      </select>
-    </div>
-    <div class='col'>
-      <label for='my-select'>Choose a pet:</label>
-
-      <select name='select-pet' id='select-pet4' class='d-none' data-placeholder='Choose a pet...'>
-      </select>
-    </div>
-  </div>
-
-  <hr class='mt-5'>
-  <h2>Cascading select</h2>
-  <div class='row mt-4'>
-    <div class='col'>
-      <label for='my-select'>Choose a pet:</label>
-
-      <select name='select-pet' id='select-pet5' class='d-none' data-placeholder='Choose a pet...'>
-      </select>
-    </div>
-    <div class='col'>
-      <label for='select-hobby'>Pet's hobby:</label>
-
-      <select name='select-hobby' id='select-hobby' class='d-none' data-placeholder='Choose a hobby...'>
-      </select>
-    </div>
-</div>
-
-<!-- Choices.js JS -->
-<script src='https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js'></script>
-<!-- <script src='./js/choices.js'></script> -->
-
-<script src='./js/choices-remote-data.js'></script>
-<script type='importmap'>
-  {
-    "imports": {
-      "http-request-mock": "https://cdn.jsdelivr.net/npm/http-request-mock@2.0.2/+esm"
-    }
-  }
-</script>
-
-<script type='module' src='./js/app.mjs'></script>
-
-</body>
+  </body>
 </html>
