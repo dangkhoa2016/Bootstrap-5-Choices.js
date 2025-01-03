@@ -303,6 +303,7 @@ class ChoicesRemoteData {
 
     this.choices.setChoices(this.fetchDataFromServer, 'value', 'label', false).then(() => {
       this.hideSearchHintMessage();
+      this.choices.input.element.focus();
     });
   }
 }

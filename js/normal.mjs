@@ -6,5 +6,6 @@ selects.forEach((select) => {
       placeholder: ['choices__placeholder', 'text-secondary'],
     },
     removeItemButton: true,
+    itemSelectText: select.getAttribute('data-item-select-text'),
   });
 });
